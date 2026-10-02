@@ -55,9 +55,9 @@ pinout:
   uio[7]: ""
 
   # Analog pins - make sure to also set "analog_pins" above, else the pins won't be connected
-  ua[0]: "VDD_READ (provisional)"
-  ua[1]: "PROGRAM (provisional)"
-  ua[2]: "Buffered analogue waveform output (provisional)"
+  ua[0]: "READ"
+  ua[1]: "PROGRAM"
+  ua[2]: "OUTPUT"
   ua[3]: ""
   ua[4]: ""
   ua[5]: ""

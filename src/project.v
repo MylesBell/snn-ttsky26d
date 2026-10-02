@@ -20,4 +20,9 @@ module tt_um_mylesbell_snn (
     input  wire       rst_n     // reset_n - low to reset
 );
 
+    // Placeholder
+    assign uo_out = {8{VGND}};
+    assign uio_out = {8{VGND}};
+    assign uio_oe = {8{VGND}};
+    assign ua[2:0] = {3{VGND}};
 endmodule

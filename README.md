@@ -1,36 +1,15 @@
-![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg)
+# SNN SKY26d reservation placeholder
 
-# Tiny Tapeout Analog Project Template
+This revision is a passive placeholder to establish a two-tile (1x2),
+three-analogue-pin reservation. It contains no SNN circuitry. The three reserved
+analogue terminals and all digital outputs are grounded; do not drive the
+analogue terminals with a supply or programming voltage. The core power stripe
+has no active load.
 
-- [Read the documentation for project](docs/info.md)
+The final SNN design will replace this layout before the shuttle deadline.
+Development, release provenance and qualification evidence live in the parent
+SNN repository. Passing CI for this placeholder does not qualify that design.
 
-## What is Tiny Tapeout?
-
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital designs manufactured on a real chip.
-
-To learn more and get started, visit https://tinytapeout.com.
-
-## Analog projects
-
-For specifications and instructions, see the [analog specs page](https://tinytapeout.com/specs/analog/).
-
-## Enable GitHub actions to build the results page
-
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
-
-## Resources
-
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-
-## What next?
-
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
+The repository includes the official SKY130 analogue-template workflows,
+the placeholder GDS/LEF, its matching integration stub and
+[operating documentation](docs/info.md). Required checks remain enabled.
