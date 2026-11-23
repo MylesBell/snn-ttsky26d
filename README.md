@@ -1,10 +1,8 @@
 # SNN SKY26d reservation placeholder
 
-This revision is a passive placeholder to establish a two-tile (1x2),
-three-analogue-pin reservation. It contains no SNN circuitry. The three reserved
-analogue terminals and all digital outputs are grounded; do not drive the
-analogue terminals with a supply or programming voltage. The core power stripe
-has no active load.
+This passive placeholder reserves a 1×2 tile footprint and four analogue pins.
+All digital outputs and `ua[0]` through `ua[3]` connect to VGND. Leave all four
+grounded analogue pins undriven on the bench. VDPWR is an unloaded stripe.
 
 The final SNN design will replace this layout before the shuttle deadline.
 Development, release provenance and qualification evidence live in the parent
