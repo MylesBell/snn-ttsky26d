@@ -1,7 +1,8 @@
 # Analogue SNN Building Blocks
 
-Two input neurons send spikes to a third. One input helps the receiver fire.
-The other can stop it. The chip does both with voltages and currents, without a clock.
+This project builds analogue circuits for spiking neural networks, where
+neurons communicate through brief voltage pulses. The Tiny Tapeout test chip
+brings neurons and synapses together in a small network that runs without a clock.
 
 [Four pins](#four-pins) · [Bench tests](#how-to-test) · [Tiny Tapeout datasheet source](docs/info.md)
 
