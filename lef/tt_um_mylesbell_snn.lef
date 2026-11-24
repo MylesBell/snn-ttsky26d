@@ -431,10 +431,16 @@ MACRO tt_um_mylesbell_snn
     END
   END VDPWR
   OBS
+    LAYER li1 ;
+      RECT 0 0 161.000 225.760 ;
+    LAYER met1 ;
+      RECT 0 0 161.000 225.760 ;
+    LAYER met2 ;
+      RECT 0 0 161.000 225.760 ;
     LAYER met3 ;
-    RECT 0 0 161.000 225.760 ;
+      RECT 0 0 161.000 225.760 ;
     LAYER met4 ;
-    RECT 0 0 161.000 225.760 ;
+      RECT 0 0 161.000 225.760 ;
   END
 END tt_um_mylesbell_snn
 END LIBRARY
