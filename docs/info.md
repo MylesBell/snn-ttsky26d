@@ -1,43 +1,74 @@
 ## How it works
 
-STIM drives two source neurons. Static GPIO selects which source can excite (E) or inhibit (I) the receiving neuron.
+You can drive the receiving soma directly and watch its membrane charge
+and reset. Switch AOUT to the axon and repeat the stimulus to see the
+outgoing spike.
 
-- Current charges the soma’s membrane capacitor (MEM). As MEM rises, the sensing gate falls and the pull-up drives an axon spike.
-- The delayed reset gate turns off the pull-up and turns on the pull-down. MEM discharges and the axon returns low.
+![Simulation of a neuron charging, firing and resetting.](soma-firing.png)
 
-![Soma spike and reset in an extracted SKY130A receiver simulation.](soma-firing.png)
+Two source neurons feed the receiver. One synapse adds current and the
+other draws it away. Floating-gate charge sets each synapse's strength.
 
-- At each synapse, an axon spike enables a current set by stored floating-gate charge. E adds current to the receiving dendrite and I draws current out.
-- The same STIM pulse fires the receiver with E alone. With E and I, the dotted current sum dips below zero and the receiver axon stays low.
+Two standalone cells let you read the excitatory and inhibitory currents
+separately and apply programming pulses from H.
 
-![Same STIM command with E alone and with E and I in the Stage03 extraction at 25 °C, R = 0.400 V and preset synapse weights.](follow-a-spike.png)
+![Simulation showing how the same pulse affects the receiver with excitation alone and with inhibition added.](follow-a-spike.png)
 
 ## How to test
 
-**Check the revision first.** The reservation `6c416f7` grounds `ua[0]` through `ua[3]`. Leave those pins undriven on that revision. These steps use the functional tile. Use the shuttle’s mux map to locate its board connectors.
+Use the shuttle’s mux map to find these four pins on the board.
 
-| Macro pin | Name | Connection |
+| Macro pin | Name | What it does |
 | --- | --- | --- |
 | `ua[0]` | R | 0.400 V neural supply |
-| `ua[1]` | H | 0.420 V at park, nominal 1.000 V read command |
-| `ua[2]` | AOUT | Buffered receiver readback to scope |
-| `ua[3]` | STIM | External pulse generator |
+| `ua[1]` | H | Reference and programming input |
+| `ua[2]` | AOUT | Buffered analogue output |
+| `ua[3]` | STIM | Stimulus input |
 
-Words are hex `UI/UIO`. Keep `clk` and programming requests `uio[2]`, `uio[3]` and `uio[5]` low. Before changing routes, park STIM, open AOUT and turn off delivery. Settle the new route before reconnecting AOUT.
+Settings are hexadecimal `UI / UIO` words. Keep `clk` and the
+programming inputs `uio[2]`, `uio[3]` and `uio[5]` low during these
+experiments.
 
-1. **Power and park.** Follow the board power-up order with `ena` low, reset asserted, H at 0.420 V park and `00/00`. Release reset and enable the tile with `clk` low. Check feed currents and AOUT isolation before changing to a read word.
-2. **Calibrate.** Set H to 1.000 V. At `48/00`, fit AOUT at 190 and 210 mV STIM and check an interior level. Compare current-read blank `84/00` with CAL `A4/00`. Fit the change in AOUT against connector current and check a point of each sign. Check the VI input clamp separately at `64/00`.
-3. **Survey STIM.** With MEM isolated, compare positive delivery `84/50` with blank `84/40`. Measure loaded STIM. Start with small commands in the surveyed range.
-4. **Observe quiet.** Apply a commissioned pulse at `53/00`. AOUT shows the receiver axon with both sources off. The model command falls from 399 to 153.41 mV in 7 µs, holds 30 µs and returns in 4 µs.
-5. **Enable E.** Repeat the pulse at `57/40`. Look for a receiver spike. Use `47/40` for a separate MEM trace.
-6. **Enable E and I.** Repeat at `5F/40` with the same pulse, supplies and load. Look for a quiet axon. Use `4F/40` for MEM. Recover between pulses. The model used E and I floating-gate presets of 0.225 V and 0.125 V. Record the starting silicon response.
+Power up with `ena` and `rst_n` low, `00 / 00` selected, H at 0.420 V
+and STIM at 0.400 V. Follow the board's power-up order. Release reset and
+enable the chip. Check the supply currents before bringing H to 1.000 V
+for readout. Select `48 / 00` and change STIM from 190 mV to 210 mV.
+Check that AOUT follows the change.
 
-Route03 resolved an imposed inhibitory floating-gate charge change through
-calibrated AOUT in the powered extracted model. Writing and retention require
-a separate silicon experiment.
+| Experiment | UI / UIO | Read at AOUT |
+| --- | --- | --- |
+| Soma | `41/40` | Receiver membrane voltage |
+| Soma and axon | `42/40` | Receiver axon spike |
+| Excitatory synapse | `84/01` | Positive current |
+| Inhibitory synapse | `84/02` | Negative current |
+| Connected network | `53/00`, `57/40`, `5F/40` | Receiver axon response |
+
+For the soma and axon, drive the receiver directly from STIM. Use
+`41/00` and `42/00` for the quiet traces. In the network, the three
+settings select both sources off, excitation alone, and excitation with
+inhibition. For each trace, try dropping STIM from 0.400 V to about
+0.153 V with a 7 µs fall, a 30 µs hold and a 4 µs return. Keep the
+pulse and load the same and let the receiver recover between pulses.
+
+For either standalone synapse, set STIM to 0.400 V for the active read
+and 0 V for the inactive check. Calibrate the current readout using
+`84 / 00` for the blank and `A4 / 00` to connect the 10 MΩ calibration
+resistor. Take calibration readings with STIM above and below the sense
+voltage. Use `64 / 00` to observe the sense voltage with the resistor
+still connected. The reference current is STIM minus the sense voltage,
+divided by 10 MΩ.
+
+Subtract the blank from each cell reading before converting the AOUT
+change to current. Observe the drain voltage separately at `44 / 01`
+for excitation and `44 / 02` for inhibition. Compare readings at the
+same drain bias.
+
+Between modes, park STIM and select `00 / 00` to turn off delivery
+and open the AOUT route. Set the next word and let the readout settle
+before recording.
 
 ## External hardware
 
-- Tiny Tapeout demo board with analogue mux, 1.800 V VDPWR and VGND.
-- Current-limited R and H supplies that can sink current, a pulse generator, voltage and current meters, and a high-impedance scope probe with a Kelvin return.
-- The model fixture used a 502 Ω H feed, a 0.1 Ω return and a 100 MΩ / 24 pF AOUT load. Log the board, cable and probe loading.
+Use a Tiny Tapeout demo board with an analogue mux, 1.800 V VDPWR and
+VGND. You’ll need current-limited R and H supplies that can sink current,
+a pulse generator and a high-impedance scope probe.
