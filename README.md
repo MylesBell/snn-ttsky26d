@@ -10,8 +10,8 @@ brings neurons and synapses together in a small network that runs without a cloc
 
 [Soma still figure](docs/soma-firing.png) · Open either replay for a larger view.
 
-**Revision check.** The submitted reservation `6c416f7` grounds all four analogue pins.
-Leave them undriven. The experiments below apply to the functional 1×2 tile after release.
+**Revision check.** The reservation `6c416f7` grounds all four analogue pins.
+Leave them undriven on that revision. The experiments below use the functional 1×2 tile.
 
 ## How it works
 
@@ -35,7 +35,7 @@ MEM is the voltage on its membrane capacitor. Follow the moving dots down the th
 - **Axon → synapse → dendrite.** The axon enables a current set by the synapse’s stored floating-gate charge. E supplies current to the receiving dendrite. I draws current out. The dotted trace is the sum of the two synapse currents.
 - **Dendrite → receiver.** With E alone, the receiving membrane charges enough to fire. With E and I active, E first raises the membrane. I then pulls the sum below zero and the receiver stays quiet.
 
-*Whole-tile simulations from extracted SKY130A layouts at 25 °C and R = 0.400 V with a finite bench load and preset synapse weights. These plots show internal model signals. On the bench, use AOUT to watch the receiver.*
+*Whole-tile simulations from the earlier Stage03 extraction at 25 °C and R = 0.400 V with a finite bench load and preset synapse weights. These plots show internal model signals. On the bench, use AOUT to watch the receiver.*
 
 ## Four pins
 
@@ -53,9 +53,14 @@ The board supplies 1.800 V on VDPWR and provides VGND. [Tiny Tapeout analogue pi
 
 Digital words are hexadecimal `UI / UIO`. Keep programming requests `uio[2]`, `uio[3]` and `uio[5]` low throughout.
 
-1. **Park and check.** Select the functional tile. Follow the board’s power-up order with `ena` low and reset asserted. Start with H at 0.420 V and `10 / 00`. Enable the tile and release reset with `clk` low. Check feed currents and that AOUT is disconnected.
+1. **Park and check.** Select the functional tile. Follow the board’s power-up order with `ena` low and reset asserted. Start at `00 / 00` with H at 0.420 V park. Release reset and enable the tile with `clk` low. Check feed currents and that AOUT is disconnected before changing to a read word.
 2. **Take a quiet trace.** Commission AOUT and STIM as described in [the bench procedure](docs/info.md#how-to-test). Use `53 / 00` to observe the receiving axon at AOUT with both sources off. Apply the same commissioned STIM pulse in tests 2–4.
 3. **Enable E.** Set `57 / 40` and repeat the pulse. Look for a receiver spike after STIM returns to park.
 4. **Enable E and I.** Set `5F / 40` and repeat the pulse. With weights comparable to the simulation, AOUT stays near its quiet level. The starting weights on silicon can differ from the model presets.
 
 Between tests, return STIM to park, open the AOUT route and turn off delivery before changing the selection. Let the new route settle and allow the receiver to recover before pulsing again.
+
+The corrected route03 extraction resolved an imposed inhibitory
+floating-gate charge change through calibrated AOUT while the excitatory
+cell remained steady. Writing and retention are separate powered silicon
+experiments.
